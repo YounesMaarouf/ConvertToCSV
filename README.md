@@ -3,4 +3,4 @@
 ## run this command 
 
 ```shell
-pyinstaller main.py index.py --onefile -w --icon=converter.png
+pyinstaller main.py index.py --onefile -w --add-data "image.png;." --icon=converter.png

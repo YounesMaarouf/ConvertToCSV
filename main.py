@@ -1,10 +1,11 @@
 import os
 import platform
 import subprocess
+import sys
 import customtkinter as tk
 from tkinter import filedialog
 from index import convert_excel_to_csv
-from PIL import Image
+# from PIL import Image
 
 # browse the folders and get the desired file
 def browseFile():
@@ -66,16 +67,16 @@ frame.pack(expand=True, pady=40, padx=20)
 
 # componentes
 
-example_img_data = Image.open("example.png")
+# example_img_data = Image.open(resource_path("example.png"))
 
-example_img = tk.CTkImage(light_image=example_img_data, dark_image=example_img_data, size=(1000, 500))
+# example_img = tk.CTkImage(light_image=example_img_data, dark_image=example_img_data, size=(1000, 500))
 
 
 tk.CTkLabel(master=frame, text="UPLOAD THE FILE", font=("Helvetica", 30)).pack(anchor="nw", pady=40, padx=25)
 
-tk.CTkLabel(master=frame, text="See example :", font=("Helvetica", 20)).pack(anchor="nw", pady=(20, 0), padx=25)
+# tk.CTkLabel(master=frame, text="See example :", font=("Helvetica", 20)).pack(anchor="nw", pady=(20, 0), padx=25)
 
-tk.CTkLabel(master=frame, text="", image=example_img,corner_radius=8).pack(anchor="nw" , pady=10, padx=25)
+# tk.CTkLabel(master=frame, text="", image=example_img,corner_radius=8).pack(anchor="nw" , pady=10, padx=25)
 
 tk.CTkLabel(master=frame, text="Excel Location", font=("Helvetica", 20)).pack(anchor="nw", pady=(0, 10), padx=25)
 
