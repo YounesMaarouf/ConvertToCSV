@@ -45,6 +45,11 @@ def convert_excel_to_csv(filepath):
 
     for row in sheet.iter_rows(values_only=True):
 
+
+        # if the row is empty
+        if row[0] == None or row[1] == None: 
+            break
+        
         cash_list = []
         # parsing items from the row to convert floats and number to strings
         for item in row : 
@@ -98,9 +103,7 @@ def convert_excel_to_csv(filepath):
             # prevent conflect with the next line
             copied_line = list(line)
 
-            sliced_line = list_slicer(copied_line, 6, 7, 8, -1)
-
-
+            sliced_line = list_slicer(copied_line, 6, 7, 8, 12)
 
             for next_line in csv_data[pointer:]: 
 
@@ -144,21 +147,24 @@ def convert_excel_to_csv(filepath):
                                 sliced_line = new_slice
 
                             case "GCB03": 
-                                new_slice = sliced_line[7:]
+
+                                new_slice = sliced_line[:7]
                                 
                                 prefix = ["GCB12", "", "GCB06", ""]
                             
+                                print(prefix)
+
                                 for item in prefix: 
                                     new_slice.append(item)
 
-                                for item in sliced_line[:-2]: 
+                                for item in sliced_line[-2:]: 
                                     new_slice.append(item)
+                                
                                 
                                 sliced_line = new_slice
 
                     # +2 columns written
                     if (count == 1): 
-
                         match sliced_line[-2]: 
 
                             case "GCB06": 
@@ -169,7 +175,8 @@ def convert_excel_to_csv(filepath):
                             case "GCB03": 
                                 # one line condition
                                 prefix = ["GCB12", ""] if sliced_line[-4] == "GCB06" else ["GCB06", ""]
-
+                                
+                                print(prefix)
                                 # if the previous was GCB06
                                 if sliced_line[-4] == "GCB06": 
                                     new_slice = sliced_line[:7]

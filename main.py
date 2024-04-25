@@ -1,7 +1,6 @@
 import os
 import platform
 import subprocess
-import sys
 import customtkinter as tk
 from tkinter import filedialog
 from index import convert_excel_to_csv
