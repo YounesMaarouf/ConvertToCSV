@@ -30,6 +30,39 @@ def list_combiner(first_list: list, second_list: list) :
         first_list.append(item)
     return first_list
 
+def filter_none(data : list):
+
+    filtered_list = list(filter(lambda x: x != "None" , data))
+
+    return filtered_list
+    
+
+# sort the sheet if it is not on order
+def custom_sort(item):
+    # Sort by index 5 in ascending order
+    value = item[5]
+    # Custom order for groups
+    group_order = {"GCB12": 0, "GCB06": 1, "GCB03": 2}
+    group = item[10]  # Index of the group
+    return (value, group_order.get(group, 3))
+
+def validaterow(row): 
+
+    non_nullable_indices = [0, 1, 2, 3, 4, 5, 6, 7, 9, 10, 11]
+
+    for index in non_nullable_indices:
+        if row[index] == "None":
+            return index
+    return True
+
+def convert_to_letters(number):
+    if 1 <= number <= 12:
+        return chr(ord('a') + number)
+    elif number == 0:
+        return 'a'
+    else:
+        return None  
+
 
 # execution
 def convert_excel_to_csv(filepath):
@@ -41,14 +74,15 @@ def convert_excel_to_csv(filepath):
     wb = load_workbook(filename=filepath)
     sheet = wb.active
 
+    sorted_data = sorted(sheet.iter_rows(values_only=True), key=custom_sort)
+
     csv_data=[]
 
-    for row in sheet.iter_rows(values_only=True):
+    
 
-
-        # if the row is empty
-        if row[0] == None or row[1] == None: 
-            break
+    for row in filter_none(sorted_data):
+        
+        # if the row is empty  
         
         cash_list = []
         # parsing items from the row to convert floats and number to strings
@@ -86,26 +120,40 @@ def convert_excel_to_csv(filepath):
     prefix_list = list(range(13)) # empty list 
     csv_data.append(prefix_list)
 
+
+# writing our csv file using csv_data
     with open (f"{desired_part}.csv", 'w') as csv_obj:
     # the separated char is pip `|`
+
         writer = csv.writer(csv_obj, delimiter="|")
-
-
+        
         count = 0 
         pointer = 0
-
+        
         for line in csv_data: 
 
             if (count > 0): 
                 count -= 1
                 continue
 
-            # prevent conflect with the next line
-            copied_line = list(line)
+            # sliced_line
+            sliced_line = line[:12]
+            
+            sliced_line = list_slicer(sliced_line, 6, 7, 8)
 
-            sliced_line = list_slicer(copied_line, 6, 7, 8, 12)
-
+            
             for next_line in csv_data[pointer:]: 
+
+                standard_line = next_line[:12]
+
+                # check 
+                validator = validaterow(next_line)
+                print(validator)
+
+                if validator is not True: 
+                    raise ValueError(f"error at line {pointer + count + 1}  column : {convert_to_letters(validator).upper()}")
+
+                print(standard_line)
 
                 if count == 0: 
                     count += 1
@@ -113,12 +161,11 @@ def convert_excel_to_csv(filepath):
 
                 # if the next line doesn't match
                 if line[4] != next_line[4] :
-                    #write line               
+                    # write line               
 
                     pointer += count
                     count -= 1
 
-                    # print(sliced_line)
                     # +0 column written
                     if count == 0: 
 
@@ -130,7 +177,7 @@ def convert_excel_to_csv(filepath):
                                     sliced_line.append(item)
 
                             case "GCB06": 
-                                new_slice = sliced_line[7:]
+                                new_slice = sliced_line[:7]
                                 
                                 prefix_1 = ["GCB12", ""]
                                 prefix_2 = ["GCB03", ""]
@@ -138,7 +185,7 @@ def convert_excel_to_csv(filepath):
                                 for item in prefix_1: 
                                     new_slice.append(item)
 
-                                for item in sliced_line[:-2]: 
+                                for item in sliced_line[-2:]: 
                                     new_slice.append(item)
 
                                 for item in prefix_2: 
@@ -152,7 +199,6 @@ def convert_excel_to_csv(filepath):
                                 
                                 prefix = ["GCB12", "", "GCB06", ""]
                             
-                                print(prefix)
 
                                 for item in prefix: 
                                     new_slice.append(item)
@@ -176,7 +222,6 @@ def convert_excel_to_csv(filepath):
                                 # one line condition
                                 prefix = ["GCB12", ""] if sliced_line[-4] == "GCB06" else ["GCB06", ""]
                                 
-                                print(prefix)
                                 # if the previous was GCB06
                                 if sliced_line[-4] == "GCB06": 
                                     new_slice = sliced_line[:7]
@@ -202,26 +247,23 @@ def convert_excel_to_csv(filepath):
                                     sliced_line = new_slice
                                 
                     # write line
-
                     writer.writerow(sliced_line)
-
 
                     sliced_line = []
                     sliced_next_line = []
 
                     break 
                 
-
                 count += 1
-                # append the next_line to the list
 
+                # append the next_line to the main list (sliced_list)
                 if line[4] == next_line[4]:
 
-                    copied_next_line = list(next_line)
+                    # all the none items are filtered
+                    copied_next_line = filter_none(list(next_line))
 
-                    sliced_next_line = list_slicer(copied_next_line,0, 1, 2, 3, 4, 5, 8, 6, 7, 9, -1)
+                    sliced_next_line = list_slicer(copied_next_line,0, 1, 2, 3, 4, 5, 6, 7, 8, -1)
 
-                    
                     sliced_line = list_combiner(sliced_line, sliced_next_line)
                     
                 

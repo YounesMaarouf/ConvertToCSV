@@ -33,14 +33,29 @@ def preview(file_path):
 def convertToCSV():
      
     filepath = entry.get()
+
+    filename = os.path.basename(filepath)
     try : 
+
         convert_excel_to_csv(filepath)
+
 
         message.configure(text="the excel file converted to csv successfully", text_color="green")
 
-    except :
-        message.configure(text="(make sure you entered a valid path/file.xlsx)", text_color="red")
-        print(f'An error occured') 
+    except ValueError as e:
+
+        message.configure(text=f"ERROR LOG : {e}", text_color="red")
+        print(f'{e}') 
+
+        # Delete the file
+        if os.path.exists(filepath.replace("xlsx", "csv")):
+            os.remove(filepath.replace("xlsx", "csv"))
+
+    except Exception as e: 
+
+        message.configure(text=f"cannot convert {filename}, (make sure you entered a valid format of xlsx)", text_color="red")
+        
+        print(e) 
 
     finally : 
         entry.delete(0, len(entry.get()))
@@ -66,16 +81,8 @@ frame.pack(expand=True, pady=40, padx=20)
 
 # componentes
 
-# example_img_data = Image.open(resource_path("example.png"))
-
-# example_img = tk.CTkImage(light_image=example_img_data, dark_image=example_img_data, size=(1000, 500))
-
-
 tk.CTkLabel(master=frame, text="UPLOAD THE FILE", font=("Helvetica", 30)).pack(anchor="nw", pady=40, padx=25)
 
-# tk.CTkLabel(master=frame, text="See example :", font=("Helvetica", 20)).pack(anchor="nw", pady=(20, 0), padx=25)
-
-# tk.CTkLabel(master=frame, text="", image=example_img,corner_radius=8).pack(anchor="nw" , pady=10, padx=25)
 
 tk.CTkLabel(master=frame, text="Excel Location", font=("Helvetica", 20)).pack(anchor="nw", pady=(0, 10), padx=25)
 
