@@ -3,7 +3,7 @@ import platform
 import subprocess
 import customtkinter as tk
 from tkinter import filedialog
-from index import convert_excel_to_csv
+from utils import convert_excel_to_csv
 # from PIL import Image
 
 # browse the folders and get the desired file
@@ -11,7 +11,7 @@ def browseFile():
 
     entry.delete(0, len(entry.get()))
 
-    filepath = filedialog.askopenfilename(title="open xlsx file",filetypes= (("xlsx files","*.xlsx"),("xls files","*.xls*")))
+    filepath = filedialog.askopenfilename(title="open xlsx file",filetypes=(("xlsx files","*.xlsx"),("xls files","*.xls")))
 
     entry.insert(0, filepath)
 
@@ -38,9 +38,8 @@ def convertToCSV():
     try : 
 
         convert_excel_to_csv(filepath)
-
-
         message.configure(text="the excel file converted to csv successfully", text_color="green")
+        
 
     except ValueError as e:
 
