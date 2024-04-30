@@ -94,10 +94,11 @@ def convert_excel_to_csv(filepath) :
 
 
     raw_data = [list(t) for t in raw_data]
-
+    
+    # 
     for row in raw_data : 
         row[1] = f'GCB{row[1][-2:]}'
-
+        row[2] = int(str(row[2]).replace(".", ""))
     sorted_data = sorted(raw_data, key=custom_sort)
 
 
