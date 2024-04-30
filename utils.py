@@ -129,7 +129,7 @@ def convert_excel_to_csv(filepath) :
 
     with open (f"{desired_part}.csv", 'w') as csv_obj:  
 
-        writer = csv.writer(csv_obj, delimiter="|")
+        writer = csv.writer(csv_obj, delimiter="|", lineterminator="\n")
         # global variables 
         count = 0 
         pointer = 0
