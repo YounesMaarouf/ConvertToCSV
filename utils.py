@@ -34,9 +34,13 @@ def custom_sort(line):
     group = line[1]  # Index of the group
     return (value, group_order.get(group, 3))
 
+    # filtring none inside the main array [none, item, none] => [item]
+def filter_none(data : list):
+
+    filtered_list = list(filter(lambda x: x != "None" , data))
+    return filtered_list
 
 # combining multiples lists
-
 def list_combiner(main_list: list, *prefix: list) :
 
     formated_list = [item for sublist in prefix for item in sublist]
@@ -45,6 +49,19 @@ def list_combiner(main_list: list, *prefix: list) :
         main_list.append(item)
 
     return main_list
+
+def merge_lists(list_of_lists):
+    merged_lists = {}
+
+    for sublist in list_of_lists:
+        key = (sublist[0], sublist[1])
+        if key in merged_lists:
+            merged_lists[key] += sublist[2]
+        else:
+            merged_lists[key] = sublist[2]
+
+    result = [[key[0], key[1], value] for key, value in merged_lists.items()]
+    return result
 
     
 def convert_excel_to_csv(filepath) : 
@@ -80,9 +97,6 @@ def convert_excel_to_csv(filepath) :
 
     # Save the workbook to a file
     workbook.save(filename)
-    # remplacing BTBZER with GCB
-
-
 
     for row in raw_data : 
         # check                 
@@ -94,16 +108,16 @@ def convert_excel_to_csv(filepath) :
 
 
     raw_data = [list(t) for t in raw_data]
-    
-    # 
+
+    # remplacing BTBZER with GCB
     for row in raw_data : 
         row[1] = f'GCB{row[1][-2:]}'
         row[2] = int(str(row[2]).replace(".", ""))
+
+    raw_data = merge_lists(raw_data)
     sorted_data = sorted(raw_data, key=custom_sort)
 
-
     csv_data = []
-
     for row in sorted_data: 
 
         cash_list = list(range(9))
@@ -235,6 +249,8 @@ def convert_excel_to_csv(filepath) :
                         
                     
 
+        # csv_obj.seek(-1, 2)  # Move the file pointer to one position before the end
+        # csv_obj.truncate()   # Truncate the file at the current position
 
 
 
