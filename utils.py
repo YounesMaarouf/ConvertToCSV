@@ -248,8 +248,6 @@ def convert_excel_to_csv(filepath) :
                     safe_line = list_combiner(safe_line, sliced_next_line)
                         
                     
-
-        # csv_obj.seek(-1, 2)  # Move the file pointer to one position before the end
         # csv_obj.truncate()   # Truncate the file at the current position
 
 
